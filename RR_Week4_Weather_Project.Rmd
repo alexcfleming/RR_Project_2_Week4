@@ -1,0 +1,43 @@
+---
+title: "RR_Week4_Weather_Project"
+output: html_document
+---
+## Alex Fleming - Reproducible Research - Course Project 2 - Storm Data Analysis
+Contact: alex.c.fleming@gmail.com
+
+## Synopsis
+Text
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Processing
+```{r processing, echo=TRUE, cache=TRUE}
+library(data.table)
+library(R.utils)
+data <- fread(bunzip2("repdata%2Fdata%2FStormData.csv.bz2", remove=TRUE, skip=TRUE))
+
+
+```
+
+## Data Manipulation
+
+```{r manipulate, echo=TRUE}
+
+```
+
+## Output and Visualization
+
+```{r output, echo=TRUE}
+
+```
+
+## Results
+
+This is an R Markdown document. 
+
+## Summary Output
+
+### Final Discussion
+
