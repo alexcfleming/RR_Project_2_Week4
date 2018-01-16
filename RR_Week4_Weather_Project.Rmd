@@ -2,41 +2,131 @@
 title: "RR_Week4_Weather_Project"
 output: html_document
 ---
+### Alex Fleming - Reproducible Research - Course Project 2 - Storm Data Analysis
 Contact: alex.c.fleming@gmail.com
 
-Text
+This is a knited web page with Alex Fleming's work for the final peer-reviewed assignment for the Reproducible Research course in the Johns Hopkins Data Science Specialization
+
+### Synopsis
+The goal of this analysis is to address two questions:  
+- Across the United States, which types of events (as indicated in the 𝙴𝚅𝚃𝚈𝙿𝙴 variable) are most harmful with respect to population health?  
+- Across the United States, which types of events have the greatest economic consequences?  
+
+The data available comes from the NOAA Storm Events database, with data going back to 1950. The database provides location and timing as well as estimates of personal and property impact. We will use **injuries** and **fatalities** as the proxy values for **population health** and we will use **property damage** and **crop damage** combined as the proxy for **economic consequences**. 
+
+Event type is the primary metric we are comparing. The inherent assumption is that data improves over time, so there may be more accurate numbers as the data becomes more recent.
 
 ```{r setup, include=FALSE}
 library(knitr)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE)
 ```
 
+### Data Processing
 ```{r processing, echo=TRUE, cache=TRUE}
+#Load packages
 library(data.table)
 library(R.utils)
 library(lubridate)
+#Unzip and load data
 fileName <- "repdata%2Fdata%2FStormData.csv.bz2"
 data <- fread(bunzip2(fileName, remove=FALSE, skip=TRUE))
 names <- names(data)
+#Convert dates and times for usage and clean columns
 data$BGN_DATE <- as.Date(data$BGN_DATE, "%m/%d/%Y %H:%M:%S")
-data$BGN_TIME <- strptime(data$BGN_TIME, "%H%M")
-=======
->>>>>>> 24a0b6fed5c2e2d44910b20cff1117f1053ed446
-
+data$year <- year(data$BGN_DATE)
 ```
 
+### Data Manipulation
 
 ```{r manipulate, echo=TRUE}
-
+#Create summaries needed for visualization
+pophealth <- data[,.(Fatal.sum=sum(FATALITIES), Injury.sum=sum(INJURIES)), by=EVTYPE]
+econcons <- data[,.(Propd.sum=sum(PROPDMG), Cropd.sum=sum(CROPDMG)), by=EVTYPE]
+pophealthtime <- data[,.(Fatal.sum=sum(FATALITIES), Injury.sum=sum(INJURIES)), by=year]
+spophealth <- pophealth[order(Fatal.sum, Injury.sum, decreasing = TRUE),]
+seconcons <- econcons[order(Propd.sum, decreasing = TRUE),]
+seconcons2 <- econcons[order(Cropd.sum, decreasing = TRUE),]
 ```
 
+### Output and Visualization
 
+This visualization uses a very clever function which I did not create called 'multiplot' that can be found on www.cookbook-r.com. All other code on this page (except the multiplot function) was written by Alex Fleming. [link](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/)
 
+```{r multiplot, echo=FALSE}
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
 ```
 
+First we show the data history with total fatalities and injuries over time, which illustrates our issue with data quality, clearly changing in the 1990s, potentially due to collection practices or funding changes to the reporting agencies.
 
-This is an R Markdown document. 
+```{r figure1, echo=TRUE}
+library(ggplot2)
+p1 <- qplot(x=year, y=Fatal.sum, data=pophealthtime, geom="col")
+p2 <- qplot(x=year, y=Injury.sum, data=pophealthtime, geom="col")
+multiplot(p1,p2, cols=1)
+```
 
+Next, we look at the breakdown of population health by event type, for practical purposes we look at the top 15 types by fatalities, with injuries shown. The top 3 events are tornadoes, heat, and flash flooding.
 
-### Final Discussion
+```{r table1, echo=TRUE}
+spophealth[1:15,]
+```
 
+Last, we visualize the top economic consequences broken down into property and crops separately.
+
+```{r figure2, echo=TRUE}
+plotecon <- seconcons[1:10,]
+ggplot(plotecon, aes(x=EVTYPE, y=Propd.sum)) + geom_bar(stat='identity') + coord_flip() + labs(x="Event Type", y="Sum of Property Damage")
+```
+
+We observe that tornadoes are by far the largest cause of property damage, followed by wind and flash flooding.
+
+```{r figure3, echo=TRUE}
+plotecon <- seconcons2[1:10,]
+ggplot(plotecon, aes(x=EVTYPE, y=Cropd.sum)) + geom_bar(stat='identity') + coord_flip() + labs(x="Event Type", y="Sum of Crop Damage")
+```
+
+Crops, however, seem more susceptible to hail, primarily, and flooding.
+
+### Results
+
+Overall, tornadoes have a large and significant imapct over time. The population vs. economic impacts vary based on the types of event. People and property are susceptible to different stimulus.
+
+### Output Considerations
+
+The impact of the historical data collection may skew the movement of these results over time, but since the primary questions were cumulative, I feel confident in the output of this analysis.
+
+Please do not hesitate to reach out to me if you have any questions or feedback. [Mail](mailto:alex.c.fleming@gmail.com)
