@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/349525/a73a23075122498abc6ad84680d13b6e
+bundleId: https://api.rpubs.com/api/v1/document/349525/a73a23075122498abc6ad84680d13b6e
+url: http://rpubs.com/alex_c_fleming/349525
+when: 1516127274.82546
