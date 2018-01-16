@@ -2,42 +2,49 @@
 title: "RR_Week4_Weather_Project"
 output: html_document
 ---
-## Alex Fleming - Reproducible Research - Course Project 2 - Storm Data Analysis
+### Alex Fleming - Reproducible Research - Course Project 2 - Storm Data Analysis
 Contact: alex.c.fleming@gmail.com
 
-## Synopsis
+This is a knited web page with Alex Fleming's work for the final peer-reviewed assignment for the Reproducible Research course in the Johns Hopkins Data Science Specialization
+
+### Synopsis
 Text
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Data Processing
+### Data Processing
 ```{r processing, echo=TRUE, cache=TRUE}
 library(data.table)
 library(R.utils)
-data <- fread(bunzip2("repdata%2Fdata%2FStormData.csv.bz2", remove=TRUE, skip=TRUE))
-
+data <- fread(bunzip2("repdata%2Fdata%2FStormData.csv.bz2", remove=FALSE, skip=TRUE))
 
 ```
 
-## Data Manipulation
+### Data Manipulation
 
 ```{r manipulate, echo=TRUE}
 
 ```
 
-## Output and Visualization
+### Output and Visualization
 
-```{r output, echo=TRUE}
+```{r plots, echo=TRUE}
 
 ```
 
-## Results
+### Results
 
 This is an R Markdown document. 
 
-## Summary Output
+### Summary Output
 
 ### Final Discussion
 
+Questions
+Your data analysis must address the following questions:
+
+Across the United States, which types of events (as indicated in the 𝙴𝚅𝚃𝚈𝙿𝙴 variable) are most harmful with respect to population health?
+Across the United States, which types of events have the greatest economic consequences?
+Consider writing your report as if it were to be read by a government or municipal manager who might be responsible for preparing for severe weather events and will need to prioritize resources for different types of events. However, there is no need to make any specific recommendations in your report.
