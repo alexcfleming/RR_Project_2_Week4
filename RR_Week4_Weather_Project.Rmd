@@ -9,6 +9,7 @@ Contact: alex.c.fleming@gmail.com
 Text
 
 ```{r setup, include=FALSE}
+library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -16,8 +17,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r processing, echo=TRUE, cache=TRUE}
 library(data.table)
 library(R.utils)
-data <- fread(bunzip2("repdata%2Fdata%2FStormData.csv.bz2", remove=TRUE, skip=TRUE))
-
+library(lubridate)
+fileName <- "repdata%2Fdata%2FStormData.csv.bz2"
+data <- fread(bunzip2(fileName, remove=FALSE, skip=TRUE))
+names <- names(data)
+data$BGN_DATE <- as.Date(data$BGN_DATE, "%m/%d/%Y %H:%M:%S")
+data$BGN_TIME <- strptime(data$BGN_TIME, "%H%M")
 
 ```
 
